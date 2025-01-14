@@ -1,0 +1,96 @@
+<head>
+ <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    .video-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .video-box {
+      background-color: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      padding: 10px;
+    }
+
+    .video-box img {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    .video-box h3 {
+      font-size: 14px;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .video-box a {
+      text-decoration: none;
+      color: inherit;
+    }
+  </style>
+</head>
+<body>
+  <div id="trending-videos" class="video-container"></div>
+
+  <script>
+    const apiKey = 'apikey'; // ここにAPIキーを挿入
+    const apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=JP&key=${apiKey}`;
+
+    async function fetchTrendingVideos() {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      const videos = data.items;
+
+      const videoContainer = document.getElementById('trending-videos');
+      
+      // 動画情報を挿入
+      videos.forEach(video => {
+        const videoBox = document.createElement('div');
+        videoBox.classList.add('video-box');
+        
+        const thumbnail = video.snippet.thumbnails.medium.url;
+        const title = video.snippet.title;
+        const videoId = video.id;
+        
+        // サムネイル画像
+        const imgElement = document.createElement('img');
+        imgElement.src = thumbnail;
+        
+        // 動画タイトル
+        const titleElement = document.createElement('h3');
+        titleElement.textContent = title;
+        
+        // 動画リンク
+        const linkElement = document.createElement('a');
+        linkElement.href = `https://www.youtube.com/watch?v=${videoId}`;
+        linkElement.target = '_blank';
+        
+        linkElement.appendChild(imgElement);
+        linkElement.appendChild(titleElement);
+        
+        videoBox.appendChild(linkElement);
+        videoContainer.appendChild(videoBox);
+      });
+    }
+
+    // ページ読み込み時にトレンド動画を取得
+    window.onload = fetchTrendingVideos;
+  </script>
+</body>
+</html>
